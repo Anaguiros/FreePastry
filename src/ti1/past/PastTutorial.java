@@ -81,6 +81,9 @@ public class PastTutorial {
   public PastTutorial(int bindport, InetSocketAddress bootaddress,
       int numNodes, final Environment env) throws Exception {
     
+	  //Name table creation
+	  PrettyName name = new PrettyName();
+	  
     // Generate the NodeIds Randomly
     NodeIdFactory nidFactory = new RandomNodeIdFactory(env);
 
@@ -111,7 +114,9 @@ public class PastTutorial {
         }       
       }
       
-      System.out.println("Finished creating new node " + node );
+      name.insertNewNode(node.getLocalNodeHandle());
+      
+      System.out.println("Finished creating new node " + name.getNodeName(node.getLocalNodeHandle()) );
       
       
       // used for generating PastContent object Ids.
@@ -153,7 +158,7 @@ public class PastTutorial {
       
       // pick a random past appl on a random node
       Past p = (Past)apps.get(env.getRandomSource().nextInt(numNodes));
-      System.out.println("Inserting " + myContent + " at node "+p.getLocalNodeHandle());
+      System.out.println("Inserting " + myContent + " at node "+name.getNodeName(p.getLocalNodeHandle()));
       
       // insert the data
       p.insert(myContent, new Continuation() {
@@ -189,7 +194,7 @@ public class PastTutorial {
       // pick a random past appl on a random node
       Past p = (Past)apps.get(env.getRandomSource().nextInt(numNodes));
 
-      System.out.println("Looking up " + lookupKey + " at node "+p.getLocalNodeHandle());
+      System.out.println("Looking up " + lookupKey + " at node "+name.getNodeName(p.getLocalNodeHandle()));
       p.lookup(lookupKey, new Continuation() {
         public void receiveResult(Object result) {
           System.out.println("Successfully looked up " + result + " for key "+lookupKey+".");
@@ -212,7 +217,7 @@ public class PastTutorial {
     // pick a random past appl on a random node
     Past p = (Past)apps.get(env.getRandomSource().nextInt(numNodes));
 
-    System.out.println("\n Looking up bogus key " + bogusKey + " at node "+p.getLocalNodeHandle());
+    System.out.println("\n Looking up bogus key " + bogusKey + " at node "+name.getNodeName(p.getLocalNodeHandle()));
     p.lookup(bogusKey, new Continuation() {
       public void receiveResult(Object result) {
         System.out.println("Successfully looked up " + result + " for key "+bogusKey+".  Notice that the result is null.");
